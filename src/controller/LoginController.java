@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -8,8 +9,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import businesslogic.ValidateUser;
 import dao.UserDAO;
 import model.User;
 
@@ -37,8 +36,17 @@ public class LoginController extends HttpServlet {
 		String password = request.getParameter("password"); //  get the password value from the jsp/html page
 
 		// Fill your code
-		
-		boolean validateUser = userdao.loginUser(user);
+		User user=new User();
+		user.setEmail(email);
+		user.setPassword(password);
+		UserDAO userdao=new UserDAO();
+		boolean validateUser = false;
+		try {
+			validateUser = userdao.loginUser(user);
+		} catch (ClassNotFoundException | SQLException e) {
+			
+			e.printStackTrace();
+		}
 		if(validateUser) {
 			RequestDispatcher rd=this.getServletContext().getRequestDispatcher("/WEB-INF/views/blogView.jsp");
 			rd.forward(request, response);
